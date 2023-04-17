@@ -152,25 +152,25 @@ class App {
 
   protected routes(): void {
     this.app.use("/users", UserRoutes);
-    this.app.use("/schedule", AuthMiddleware, RoleValidation, ScheduleRoutes);
-    this.app.use("/scheduleitem", AuthMiddleware, ScheduleItemRoutes);
-    this.app.use("/schedulepacking", AuthMiddleware, ScheduleItemPackingRoutes);
-    this.app.use(
-      "/roleprofile",
-      AuthMiddleware,
-      RoleValidation,
-      RoleProfileRoutes
-    );
-    this.app.use("/rolelist", AuthMiddleware, RoleValidation, RoleListRoutes);
-    this.app.use("/roleuser", AuthMiddleware, RoleValidation, RoleUserRoutes);
-    this.app.use("/history", AuthMiddleware, HistoryRoutes);
-    this.app.use("/workflowstate", AuthMiddleware, WorkflowStateRoutes);
-    this.app.use("/workflowaction", AuthMiddleware, workflowActionRoutes);
-    this.app.use("/workflow", AuthMiddleware, WorkflowRoutes);
-    this.app.use("/chat", AuthMiddleware, ChatRoutes);
-    this.app.use("/message", AuthMiddleware, MessageRoutes);
-    this.app.use("/warehouse", WarehouseRoutes);
-    this.app.use("/packingid", PackingIdRoutes);
+    // this.app.use("/schedule", AuthMiddleware, RoleValidation, ScheduleRoutes);
+    // this.app.use("/scheduleitem", AuthMiddleware, ScheduleItemRoutes);
+    // this.app.use("/schedulepacking", AuthMiddleware, ScheduleItemPackingRoutes);
+    // this.app.use(
+    //   "/roleprofile",
+    //   AuthMiddleware,
+    //   RoleValidation,
+    //   RoleProfileRoutes
+    // );
+    // this.app.use("/rolelist", AuthMiddleware, RoleValidation, RoleListRoutes);
+    // this.app.use("/roleuser", AuthMiddleware, RoleValidation, RoleUserRoutes);
+    // this.app.use("/history", AuthMiddleware, HistoryRoutes);
+    // this.app.use("/workflowstate", AuthMiddleware, WorkflowStateRoutes);
+    // this.app.use("/workflowaction", AuthMiddleware, workflowActionRoutes);
+    // this.app.use("/workflow", AuthMiddleware, WorkflowRoutes);
+    // this.app.use("/chat", AuthMiddleware, ChatRoutes);
+    // this.app.use("/message", AuthMiddleware, MessageRoutes);
+    // this.app.use("/warehouse", WarehouseRoutes);
+    // this.app.use("/packingid", PackingIdRoutes);
 
     this.app.use(
       "/workflowtransition",

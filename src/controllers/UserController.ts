@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken";
 import { History } from "../models";
 import HistoryController from "./HistoryController";
 import { ISearch } from "../utils/FilterQuery";
+import axios from "axios";
 
 class UserController implements IController {
   index = async (req: Request, res: Response): Promise<Response> => {
@@ -64,7 +65,6 @@ class UserController implements IController {
       const limit: number | string = parseInt(`${req.query.limit}`) || 10;
       let page: number | string = parseInt(`${req.query.page}`) || 1;
 
-
       let search: ISearch = {
         filter: ["name", "username"],
         value: req.query.search || "",
@@ -75,7 +75,7 @@ class UserController implements IController {
       // End
 
       // Mengambil hasil filter
-      let isFilter = FilterQuery.getFilter(filters, stateFilter,search);
+      let isFilter = FilterQuery.getFilter(filters, stateFilter, search);
       // End
 
       // Validasi apakah filter valid
@@ -252,47 +252,74 @@ class UserController implements IController {
       return res.status(400).json({ status: 400, msg: "Password Required!" });
     }
     try {
-      const result: any = await User.findOne({
-        $and: [{ username: req.body.username.toLowerCase() }],
-      });
-      if (!result) {
-        return res.status(400).json({ status: 400, msg: "User not found" });
+      const response = await axios.post(
+        "https://etm.digitalasiasolusindo.com/api/method/login",
+        {
+          usr: req.body.username,
+          pwd: req.body.password,
+        }
+      );
+      const { data, headers }: any = response;
+      const cookie = headers["set-cookie"];
+      let finalCookie: String = "";
+      if (cookie.length > 0) {
+        for (const item of cookie) {
+          let isCookie = item.split(" ");
+          finalCookie = finalCookie + isCookie[0];
+        }
       }
-      const match = await bcrypt.compare(req.body.password, result.password);
-      if (!match) {
-        return res.status(400).json({ status: 400, msg: "Wrong password" });
-      }
+
+      // res.cookie('erpnextCookie', cookie, { httpOnly: true });
+
+      // const result: any = await User.findOne({
+      //   $and: [{ username: req.body.username.toLowerCase() }],
+      // });
+      // if (!result) {
+      //   return res.status(400).json({ status: 400, msg: "User not found" });
+      // }
+      // const match = await bcrypt.compare(req.body.password, result.password);
+      // if (!match) {
+      //   return res.status(400).json({ status: 400, msg: "Wrong password" });
+      // }
+      // const accessToken = jwt.sign(
+      //   {
+      //     _id: result.id,
+      //     name: result.name,
+      //     username: result.username,
+      //     status: result.status,
+      //   },
+      //   `${process.env.ACCESS_TOKEN_SECRET}`,
+      //   {
+      //     expiresIn: "1d",
+      //   }
+      // );
+      // const refreshToken = jwt.sign(
+      //   {
+      //     _id: result.id,
+      //     name: result.name,
+      //     username: result.username,
+      //     status: result.status,
+      //   },
+      //   `${process.env.REFRESH_TOKEN_SECRET}`,
+      //   {
+      //     expiresIn: "1d",
+      //   }
+      // );
+
       const accessToken = jwt.sign(
         {
-          _id: result.id,
-          name: result.name,
-          username: result.username,
-          status: result.status,
+          cookie: finalCookie,
         },
         `${process.env.ACCESS_TOKEN_SECRET}`,
         {
           expiresIn: "1d",
         }
       );
-      const refreshToken = jwt.sign(
-        {
-          _id: result.id,
-          name: result.name,
-          username: result.username,
-          status: result.status,
-        },
-        `${process.env.REFRESH_TOKEN_SECRET}`,
-        {
-          expiresIn: "1d",
-        }
-      );
 
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        maxAge: 20 * 60 * 60 * 1000,
-        // secure:true
+      return res.status(200).json({
+        status: 200,
+        token: accessToken,
       });
-      return res.status(200).json({ status: 200, token: accessToken });
     } catch (error) {
       return res
         .status(400)
