@@ -28,8 +28,8 @@ import {
 } from "./routes";
 import Redis from "./config/Redis";
 import { SocketIO } from "./utils";
-import { Schedule } from "./models";
-import cron from "node-cron";
+// import { Schedule } from "./models";
+// import cron from "node-cron";
 import { AuthMiddleware } from "./middleware";
 import { RoleValidation } from "./middleware/RoleValidation";
 const cookieParser = require("cookie-parser");
@@ -52,7 +52,7 @@ class App {
     this.plugins();
     this.database = new DataConnect();
     this.routes();
-    this.Cron();
+    // this.Cron();
   }
 
   protected plugins(): void {
@@ -68,31 +68,31 @@ class App {
   }
 
   protected Cron(): void {
-    cron.schedule("* * * * *", async function () {
-      // Cek & close schedule yang sudah melebihi due date
-      const today = new Date();
-      const startOfToday = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate(),
-        0,
-        0,
-        0,
-        0
-      );
-      const update = { $set: { status: "3", workflowState: "Closed" } };
-      try {
-        await Schedule.updateMany(
-          {
-            $and: [{ dueDate: { $lt: startOfToday } }, { status: "1" }],
-          },
-          update
-        );
-      } catch (error) {
-        console.log(error);
-      }
-      // End
-    });
+    // cron.schedule("* * * * *", async function () {
+    //   // Cek & close schedule yang sudah melebihi due date
+    //   const today = new Date();
+    //   const startOfToday = new Date(
+    //     today.getFullYear(),
+    //     today.getMonth(),
+    //     today.getDate(),
+    //     0,
+    //     0,
+    //     0,
+    //     0
+    //   );
+    //   const update = { $set: { status: "3", workflowState: "Closed" } };
+    //   try {
+    //     await Schedule.updateMany(
+    //       {
+    //         $and: [{ dueDate: { $lt: startOfToday } }, { status: "1" }],
+    //       },
+    //       update
+    //     );
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    //   // End
+    // });
   }
 
   protected getSocket(): void {
