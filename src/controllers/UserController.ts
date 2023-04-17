@@ -259,56 +259,25 @@ class UserController implements IController {
           pwd: req.body.password,
         }
       );
-      const { data, headers }: any = response;
+      const { headers }: any = response;
       const cookie = headers["set-cookie"];
       let finalCookie: String = "";
+      let data: any = {};
       if (cookie.length > 0) {
         for (const item of cookie) {
           let isCookie = item.split(" ");
+          let isData = isCookie[0].split("=");
+          data[`${isData[0]}`] = isData[1];
           finalCookie = finalCookie + isCookie[0];
         }
       }
 
-      // res.cookie('erpnextCookie', cookie, { httpOnly: true });
-
-      // const result: any = await User.findOne({
-      //   $and: [{ username: req.body.username.toLowerCase() }],
-      // });
-      // if (!result) {
-      //   return res.status(400).json({ status: 400, msg: "User not found" });
-      // }
-      // const match = await bcrypt.compare(req.body.password, result.password);
-      // if (!match) {
-      //   return res.status(400).json({ status: 400, msg: "Wrong password" });
-      // }
-      // const accessToken = jwt.sign(
-      //   {
-      //     _id: result.id,
-      //     name: result.name,
-      //     username: result.username,
-      //     status: result.status,
-      //   },
-      //   `${process.env.ACCESS_TOKEN_SECRET}`,
-      //   {
-      //     expiresIn: "1d",
-      //   }
-      // );
-      // const refreshToken = jwt.sign(
-      //   {
-      //     _id: result.id,
-      //     name: result.name,
-      //     username: result.username,
-      //     status: result.status,
-      //   },
-      //   `${process.env.REFRESH_TOKEN_SECRET}`,
-      //   {
-      //     expiresIn: "1d",
-      //   }
-      // );
+      console.log(data.user_id);
 
       const accessToken = jwt.sign(
         {
           cookie: finalCookie,
+          data,
         },
         `${process.env.ACCESS_TOKEN_SECRET}`,
         {
@@ -319,6 +288,7 @@ class UserController implements IController {
       const refreshToken = jwt.sign(
         {
           cookie: finalCookie,
+          data,
         },
         `${process.env.REFRESH_TOKEN_SECRET}`,
         {
