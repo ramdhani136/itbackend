@@ -316,6 +316,22 @@ class UserController implements IController {
         }
       );
 
+      const refreshToken = jwt.sign(
+        {
+          cookie: finalCookie,
+        },
+        `${process.env.REFRESH_TOKEN_SECRET}`,
+        {
+          expiresIn: "1d",
+        }
+      );
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        maxAge: 20 * 60 * 60 * 1000,
+        // secure:true
+      });
+
       return res.status(200).json({
         status: 200,
         token: accessToken,
